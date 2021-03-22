@@ -1,3 +1,10 @@
+//importation de bcrypt
+const bcrypt = require('bcrypt');
+//importation de jsonwebtoken
+const jwt = require('jsonwebtoken')
+//importation du model User
+const User = require('../models/User');
+
 //mise en place de la logique pour l'inscription utilisateur
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
@@ -27,7 +34,11 @@ exports.login = (req, res, next) => {
             }
             res.status(200).json({
               userId: user._id,
-              token: 'TOKEN'
+              token: jwt.sign(
+                { userId: user._id },
+                'RANDOM TOKEN SECRET',
+                { expiresIn: '24h'}
+              )
             });
           })
           .catch(error => res.status(500).json({ error }));

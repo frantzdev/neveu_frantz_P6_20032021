@@ -3,6 +3,7 @@ const express = require('express');
 //importation de mongoose
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+//importation des routes utilisateur
 const userRoutes = require('./routes/user');
 //appel de la methode express
 const app = express();
@@ -23,8 +24,36 @@ app.use((req, res, next) => {
     next(); //next pour passer au middleware suivant
   });
 
-
 app.use(express.json());
+
+
+/*--------------------------essai requete GET -----------------------*/
+app.get('/api/sauces', (req, res, next) => {
+  const sauces = [
+  {
+    userId: "",
+    name: "",
+    manufacturer: "",
+    description: "",
+    mainPepper: "",
+    imageUrl: "",
+    heat: "",
+    like: "",
+    dislikes : "",
+    usersLiked: ['userId'],
+    usersDisliked: ['userId']
+  }
+    ];
+  res.status(200).json(sauces);
+});
+
+/*----------------------------essai requete POST---------------------------*/
+app.post('/api/sauces', (req, res, next) => {
+  console.log("afficher dans la console depuis le test sur POSTMAN");
+  res.status(201).json({
+    message: 'la requete POST !'
+  });
+});
 
 //importation des routes utilisateurs
 app.use('/api/auth', userRoutes);
