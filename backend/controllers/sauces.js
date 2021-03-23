@@ -1,46 +1,38 @@
-exports.getAllSauce = (req, res, next) => {
-    const sauces = [
-    {
-      userId: "sgqsg1s6qg4q3s51g4684g",
-      name: "",
-      manufacturer: "",
-      description: "",
-      mainPepper: "",
-      imageUrl: "",
-      heat: "",
-      like: "",
-      dislikes : "",
-      usersLiked: ['userId'],
-      usersDisliked: ['userId']
-    }
-      ];
-    res.status(200).json(sauces);
-  };
+const Sauce = require('../models/Sauce');
 
+
+/*----------------verb GET ---------------*/
+exports.getAllSauce = (req, res, next) => { 
+    Sauce.find()
+      .then(sauces => res.status(200).json(sauces))
+      .catch(error => res.status(400).json({ error }));
+  };
+ 
+/*----------------verb GET ---------------*/
 exports.getOneSauce = (req, res, next) => {
-    console.log("getOneSauce dans la console depuis le test sur POSTMAN");
-    res.status(201).json({
-      message: 'la requete Get/:id  !'
-    });
+    Sauce.findOne({ _id: req.params.id })
+      .then(sauce => res.status(200).json(sauce))
+      .catch(error => res.status(404).json({ error }));
   };  
 
+/*----------------verb POST ---------------*/
 exports.createSauce = (req, res, next) => {
-    console.log("createSauce dans la console depuis le test sur POSTMAN");
-    res.status(201).json({
-      message: 'la requete POST !'
+    const sauce = new Sauce({
+      ...req.body
     });
+    sauce.save()
+      .then(() => res.status(201).json({ message: "Votre sauce est ajoutée !"}))
+      .catch( error => res.status(400).json({ error }));
   };
-
+/*----------------verb PUT ---------------*/
   exports.modifySauce = (req, res, next) => {
-    console.log("modifySauce dans la console depuis le test sur POSTMAN");
-    res.status(201).json({
-      message: 'la requete PUT/:id  !'
-    });
+      Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'La sauce est modifiée !'}))
+        .catch(error => res.status(400).json({ error }));
   };  
-
-  exports.deleteSauce = (req, res, next) => {
-    console.log("deleteSauce dans la console depuis le test sur POSTMAN");
-    res.status(201).json({
-      message: 'la requete delete/:id  !'
-    });
+/*----------------verb DELETE ---------------*/
+  exports.deleteSauce = (req, res, next) => {  
+      Sauce.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'La sauce est supprimée !'}))
+        .catch(error => res.status(400).json({ error }));
   };  
