@@ -1,5 +1,6 @@
+//importation du model sauce
 const Sauce = require('../models/Sauce');
-
+const fs = require('fs');
 
 /*----------------verb GET ---------------*/
 exports.getAllSauce = (req, res, next) => { 
@@ -17,22 +18,40 @@ exports.getOneSauce = (req, res, next) => {
 
 /*----------------verb POST ---------------*/
 exports.createSauce = (req, res, next) => {
-    const sauce = new Sauce({
-      ...req.body
+  const sauceObject = JSON.parse(req.body.sauce); //parse le nouvel objet 
+  delete sauceObject._id;
+    const sauce = new Sauce({ //nouvelle sauce construite avec le nouvel objet dans le corps de la requete
+      ...sauceObject,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //modifier l'URL de l'image
     });
     sauce.save()
       .then(() => res.status(201).json({ message: "Votre sauce est ajoutée !"}))
       .catch( error => res.status(400).json({ error }));
   };
+
 /*----------------verb PUT ---------------*/
   exports.modifySauce = (req, res, next) => {
-      Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'La sauce est modifiée !'}))
-        .catch(error => res.status(400).json({ error }));
-  };  
+    const sauceObject = req.file ? //si il y a une nouvelle image on a un req.file
+      {                           
+        ...JSON.parse(req.body.sauce),  // donc on traite l'image pour modifier son url
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      } : { ...req.body }; // sinon sans image on recupere notre corps de requete
+
+    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+      .then(() => res.status(200).json({ message: 'La sauce est modifiée !'}))
+      .catch(error => res.status(400).json({ error }));
+  }; 
+
 /*----------------verb DELETE ---------------*/
   exports.deleteSauce = (req, res, next) => {  
-      Sauce.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'La sauce est supprimée !'}))
-        .catch(error => res.status(400).json({ error }));
+    Sauce.findOne({ _id: req.params.id }) //on recupere la sauce avec son id present dans le parametre de la requete
+      .then(sauce => { //puis on split l'image pour obtenir son nom de fichier
+        const filename = sauce.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {  //suppression de l'image 
+          Sauce.deleteOne({ _id: req.params.id }) // et dans la callback de fs.unlink, suppression de la sauce
+            .then(() => res.status(200).json({ message: 'La sauce est supprimée !'}))
+            .catch(error => res.status(400).json({ error }));
+        });
+      })
+      .catch(error => res.status(500).json({ error }));
   };  
