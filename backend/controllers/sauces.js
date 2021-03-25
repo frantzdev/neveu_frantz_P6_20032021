@@ -55,3 +55,13 @@ exports.createSauce = (req, res, next) => {
       })
       .catch(error => res.status(500).json({ error }));
   };  
+
+/*----------------verb Post ---------------*/
+  exports.likeSauce = (req, res, next) => {
+    countLike = 0;
+  console.log(req.body.like)
+  console.log(req.body.userId)
+  console.log(req.params.id)
+//faire un update de la ressource like quand on selectionne jaime ou j'aime pas
+//puis ajouter l'userId dans le tableau correspondant au choix j'aime ou j'aime pas
+  } 
