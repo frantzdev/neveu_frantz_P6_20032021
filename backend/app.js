@@ -1,12 +1,19 @@
 //importation de express        
 const express = require('express');
+
 //importation de mongoose
 const mongoose = require('mongoose');
+
 const bodyParser = require('body-parser');
+//importation de mongoSanitize 
+const mongoSanitize = require('express-mongo-sanitize');
+
 const path = require('path');
+
 //importation des routes utilisateur
 const userRoutes = require('./routes/user');
 const saucesRoutes = require('./routes/sauces');
+
 //appel de la methode express
 const app = express();
 
@@ -27,6 +34,10 @@ app.use((req, res, next) => {
   });
 
 app.use(express.json());
+
+//pour nettoyer les données fournies par l'utilisateur et les remplacer par _
+app.use (mongoSanitize({replaceWith : '_' }) ) ; 
+
 app.use('/images', express.static(path.join(__dirname, 'images')));
 //importation des routes utilisateurs
 app.use('/api/auth', userRoutes);

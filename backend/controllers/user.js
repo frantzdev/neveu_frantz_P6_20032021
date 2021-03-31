@@ -7,7 +7,7 @@ const User = require('../models/User');
 
 //mise en place de la logique pour l'inscription utilisateur
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
+    bcrypt.hash(req.body.password, 10) //sal le mot de passe 10 fois
       .then(hash => {  // hash pour crypter le mot de passe
         const user = new User({  //création d'un nouvel utilisateur 
           email: req.body.email, // récupération du mail dans le corps de la requete
