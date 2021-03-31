@@ -7,17 +7,26 @@ const User = require('../models/User');
 
 //mise en place de la logique pour l'inscription utilisateur
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10) //sal le mot de passe 10 fois
-      .then(hash => {  // hash pour crypter le mot de passe
-        const user = new User({  //création d'un nouvel utilisateur 
-          email: req.body.email, // récupération du mail dans le corps de la requete
-          password: hash //mise en place du hash sur le mdp
-        });
-        user.save()  // sauvegarde de l'utilisateur sur la base de donnée
-          .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-          .catch(error => res.status(400).json({ error }));
-      })
-      .catch(error => res.status(500).json({ error }));
+  //mise en place d'une regex pour le password
+  const regex = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8}");
+  let testemailRegex = regex.test(req.body.password);
+  console.log(testemailRegex);
+    if(testemailRegex) {
+      bcrypt.hash(req.body.password, 10) //sal le mot de passe 10 fois
+        .then(hash => {                  // hash pour crypter le mot de passe
+          const user = new User({        //création d'un nouvel utilisateur 
+            email: req.body.email,       // récupération du mail dans le corps de la requete
+            password: hash               //mise en place du hash sur le mdp
+          });
+          user.save()  // sauvegarde de l'utilisateur sur la base de donnée
+            .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+            .catch(error => res.status(400).json({ error: "Cette adresse mail existe déjà !" }));
+        })
+        .catch(error => res.status(500).json({ error }));
+      }
+    else {
+      next()
+    }
   };
 
 
