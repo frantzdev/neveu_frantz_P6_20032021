@@ -1,12 +1,19 @@
 //importation de bcrypt
 const bcrypt = require('bcrypt');
 //importation de jsonwebtoken
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+//importation cryptojs pour le masquage du mail
+const cryptojs = require('crypto-js');
 //importation du model User
 const User = require('../models/User');
 
+
+let secret = "secret";
+
 //mise en place de la logique pour l'inscription utilisateur
 exports.signup = (req, res, next) => {
+  //déclaration d'une variable pour crypter le mail
+  const cryptedEmail = cryptojs.HmacSHA256(req.body.email, secret).toString();
   //mise en place d'une regex pour le password
   const regex = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8}");
   let testemailRegex = regex.test(req.body.password);
@@ -15,7 +22,7 @@ exports.signup = (req, res, next) => {
       bcrypt.hash(req.body.password, 10) //sal le mot de passe 10 fois
         .then(hash => {                  // hash pour crypter le mot de passe
           const user = new User({        //création d'un nouvel utilisateur 
-            email: req.body.email,       // récupération du mail dans le corps de la requete
+            email: cryptedEmail,       // récupération du mail dans le corps de la requete
             password: hash               //mise en place du hash sur le mdp
           });
           user.save()  // sauvegarde de l'utilisateur sur la base de donnée
@@ -31,7 +38,8 @@ exports.signup = (req, res, next) => {
 
 
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email }) //findOne pour rechercher un utilisateur par son ID sur la base de donnée
+  const cryptedEmail = cryptojs.HmacSHA256(req.body.email, secret).toString();
+    User.findOne({ email: cryptedEmail }) //findOne pour rechercher un utilisateur par son ID sur la base de donnée
       .then(user => {
         if (!user) {  // si l(utilisateur n'existe pas, retourne une erreur)
           return res.status(401).json({ error: 'Utilisateur non trouvé !' });
