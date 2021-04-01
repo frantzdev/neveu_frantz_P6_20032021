@@ -5,8 +5,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
-//importation de mongoSanitize 
-const mongoSanitize = require('express-mongo-sanitize');
 
 const path = require('path');
 
@@ -33,10 +31,8 @@ app.use((req, res, next) => {
     next(); //next pour passer au middleware suivant
   });
 
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-
-//pour nettoyer les données fournies par l'utilisateur et les remplacer par _
-app.use (mongoSanitize({replaceWith : '_' }) ) ; 
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 //importation des routes utilisateurs

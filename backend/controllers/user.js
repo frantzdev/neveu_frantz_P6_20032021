@@ -22,7 +22,7 @@ exports.signup = (req, res, next) => {
       bcrypt.hash(req.body.password, 10) //sal le mot de passe 10 fois
         .then(hash => {                  // hash pour crypter le mot de passe
           const user = new User({        //création d'un nouvel utilisateur 
-            email: cryptedEmail,       // récupération du mail dans le corps de la requete
+            email: cryptedEmail,         // récupération du mail dans le corps de la requete
             password: hash               //mise en place du hash sur le mdp
           });
           user.save()  // sauvegarde de l'utilisateur sur la base de donnée
@@ -32,7 +32,7 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
       }
     else {
-      next()
+      next()  //renvoie une reponse pour terminer la requete
     }
   };
 
