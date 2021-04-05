@@ -5,6 +5,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
+//importation de package express-mongo-sanitize
+const mongoSanitize = require('express-mongo-sanitize');
+//importation du package helmet
+const helmet = require("helmet");
 
 const path = require('path');
 
@@ -34,6 +38,13 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+// Nettoyage des données contre l'injection de requêtes NoSQL
+app.use(mongoSanitize());
+
+//Utilisation de helmet pour la protection x-xss, active le filtre de script intersites(XSS) dans les navigateurs web
+app.use(helmet());
+
+//Cela indique à Express qu'il faut gérer la ressource images de manière statique 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 //importation des routes utilisateurs
 app.use('/api/auth', userRoutes);

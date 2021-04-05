@@ -8,7 +8,7 @@ const cryptojs = require('crypto-js');
 const User = require('../models/User');
 
 
-let secret = "secret";
+const secret = "dfkjsn15487vqs46qgvq4";
 
 //mise en place de la logique pour l'inscription utilisateur
 exports.signup = (req, res, next) => {
@@ -38,6 +38,7 @@ exports.signup = (req, res, next) => {
 
 
 exports.login = (req, res, next) => {
+  console.log(req.body);
   const cryptedEmail = cryptojs.HmacSHA256(req.body.email, secret).toString();
     User.findOne({ email: cryptedEmail }) //findOne pour rechercher un utilisateur par son ID sur la base de donnée
       .then(user => {
@@ -53,7 +54,7 @@ exports.login = (req, res, next) => {
               userId: user._id,
               token: jwt.sign(  //fonction sign pour encoder un nouveau token
                 { userId: user._id },
-                'RANDOM_TOKEN_SECRET',
+                'fqifhqoic,fpgququ,cqu_ycq_yds,_fyhc,4qff1q4ffijfqf2171',
                 { expiresIn: '24h'}
               )
             });
