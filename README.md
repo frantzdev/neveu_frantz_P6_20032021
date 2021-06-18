@@ -39,3 +39,22 @@ Compétences évaluées
 * Mettre en œuvre des opérations CRUD de manière sécurisée
 * Stocker des données de manière sécurisée
 * Implémenter un modèle logique de données conformément à la réglementation
+
+Démarrer le projet
+------------------
+<strong>Frontend</strong>
+
+Suivez les instructions du README.MD sur ce lien [repo frontend](https://github.com/OpenClassrooms-Student-Center/dwj-projet6)<br>
+
+<strong>Backend</strong>
+
+Requis NodeJS en version 15.11.0 <br>
+Puis vous rendre dans le répertoire <strong>backend</strong><br>
+Tappez la commande <strong>npm install</strong><br>
+Lancer le serveur avec la commande <strong>npm start</strong>
+
+Technologies
+-----------
+* Serveur Node.JS
+* Framework Express.js
+* Base de donnée MongoDB
